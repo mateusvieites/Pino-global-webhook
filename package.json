@@ -1,0 +1,42 @@
+{
+  "name": "pino-global-webhook",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "github:mateusvieites/Pino-global-webhook"
+  },
+  "author": "HardszVick / Nirin <48382353+mateusvieites@users.noreply.github.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "husky": "^9.0.11",
+    "pino-abstract-transport": "^1.1.0"
+  },
+  "keywords": [
+    "logger",
+    "discord",
+    "pino",
+    "webhook",
+    "global"
+  ],
+  "homepage": "https://github.com/mateusvieites/Pino-global-webhook#readme",
+  "bugs": {
+    "url": "https://github.com/mateusvieites/Pino-global-webhook/issues"
+  },
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc",
+    "prepare": "tsc",
+    "test": "tsc && node test"
+  }
+}
