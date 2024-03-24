@@ -127,16 +127,36 @@ interface DiscordEmbedFields {
 
 //ToDo1
 const sendSlackLog = async (
-  webhook: options["webhooks"],
+  webhooks: options["webhooks"],
   log: logOutput,
   config: slackConfig = { sameAgent: false }
 ) => {};
 //ToDo
 const sendOthersLog = async (
-  webhook: options["webhooks"],
+  webhooks: options["webhooks"],
   log: logOutput,
   config: othersConfig = { sameAgent: false }
-) => {};
+) => {
+  const agent =
+    config.sameAgent || config.sameAgent === undefined
+      ? https.Agent
+      : undefined;
+  log = await adjustWithCommonConfigs(log, config);
+  const Promises: Promise<void>[] = [];
+  webhooks.forEach((webhook) => {
+    if (webhook.includes("discord")) {
+      Promises.push(
+        sendWebhook({
+          url: webhook,
+          httpAgent: agent,
+          method: "post",
+          data: log,
+        })
+      );
+    }
+  });
+};
+
 const sendDiscordLog = async (
   webhooks: options["webhooks"],
   log: logOutput,
@@ -154,7 +174,10 @@ const sendDiscordLog = async (
     },
   }
 ) => {
-  const agent = config.sameAgent ? https.Agent : undefined;
+  const agent =
+    config.sameAgent || config.sameAgent === undefined
+      ? https.Agent
+      : undefined;
 
   log = await adjustWithCommonConfigs(log, config);
   const Promises: Promise<void>[] = [];
