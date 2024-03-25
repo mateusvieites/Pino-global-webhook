@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "github:mateusvieites/Pino-global-webhook"
+    "url": "git+https://github.com/mateusvieites/Pino-global-webhook.git"
   },
   "author": "HardszVick / Nirin <48382353+mateusvieites@users.noreply.github.com>",
   "license": "MIT",
