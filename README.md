@@ -40,8 +40,8 @@ createTransport({
         withWordRemoveTag : "coffe" ,// When find the word will delete the tag
         customTags: [{"mateus":"hello"}] // Add your custom tags from the log :D
     },
-    slack:{//same at discord without "colors" and "webhooktype"},
-    others:{//same at discord without "colors" and "webhooktype"},
+    slack:{/* same at discord without "colors" and "webhooktype" */},
+    others:{/* same at discord without "colors" and "webhooktype" */},
   })
 
 ```
