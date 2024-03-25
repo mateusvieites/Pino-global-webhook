@@ -26,7 +26,8 @@
     "discord",
     "pino",
     "webhook",
-    "global"
+    "global",
+    "slack"
   ],
   "homepage": "https://github.com/mateusvieites/Pino-global-webhook#readme",
   "bugs": {
