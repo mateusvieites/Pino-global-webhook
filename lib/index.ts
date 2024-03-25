@@ -31,6 +31,7 @@ interface logOutput {
   msg?: string;
   type?: pinoLevelType;
   raw?: string;
+  [key: string]: any;
 }
 
 interface commonConfig {
@@ -76,12 +77,12 @@ export interface options {
 }
 
 const pinoLevelEntry = {
-  10: pinoLevelType.TRACE,
-  20: pinoLevelType.DEBUG,
-  30: pinoLevelType.INFO,
-  40: pinoLevelType.WARN,
-  50: pinoLevelType.ERROR,
-  60: pinoLevelType.FATAL,
+  "10": pinoLevelType.TRACE,
+  "20": pinoLevelType.DEBUG,
+  "30": pinoLevelType.INFO,
+  "40": pinoLevelType.WARN,
+  "50": pinoLevelType.ERROR,
+  "60": pinoLevelType.FATAL,
   default: pinoLevelType.OTHERS,
 };
 
@@ -102,6 +103,9 @@ const adjustWithCommonConfigs = (
   if (!properties["customTags"]) properties["customTags"] = [];
   if (!properties["removeTag"]) properties["removeTag"] = [];
   if (!properties["withWordRemoveTag"]) properties["withWordRemoveTag"] = [];
+  //@ts-ignore
+  const type = pinoLevelEntry[log.level!.toString()] || pinoLevelEntry.default;
+  log.type = type;
   properties.customTags.forEach((customTag) => {
     for (const key in customTag) {
       log[key] = customTag[key];
@@ -125,13 +129,37 @@ interface DiscordEmbedFields {
   value: number | string;
 }
 
-//ToDo1
 const sendSlackLog = async (
   webhooks: options["webhooks"],
   log: logOutput,
   config: slackConfig = { sameAgent: false }
-) => {};
-//ToDo
+) => {
+  const agent =
+    config.sameAgent || config.sameAgent === undefined
+      ? https.Agent
+      : undefined;
+
+  log = await adjustWithCommonConfigs(log, config);
+  const Promises: Promise<void>[] = [];
+  webhooks.forEach((webhook) => {
+    const payload = {
+      text: log,
+    };
+    Promises.push(
+      sendWebhook({
+        url: webhook,
+        httpAgent: agent,
+        method: "post",
+        data: payload,
+      })
+    );
+  });
+  await Promise.all(Promises);
+  config.sameAgent || config.sameAgent === undefined ? https.Agent : undefined;
+
+  log = await adjustWithCommonConfigs(log, config);
+};
+
 const sendOthersLog = async (
   webhooks: options["webhooks"],
   log: logOutput,
@@ -141,20 +169,20 @@ const sendOthersLog = async (
     config.sameAgent || config.sameAgent === undefined
       ? https.Agent
       : undefined;
+
   log = await adjustWithCommonConfigs(log, config);
   const Promises: Promise<void>[] = [];
   webhooks.forEach((webhook) => {
-    if (webhook.includes("discord")) {
-      Promises.push(
-        sendWebhook({
-          url: webhook,
-          httpAgent: agent,
-          method: "post",
-          data: log,
-        })
-      );
-    }
+    Promises.push(
+      sendWebhook({
+        url: webhook,
+        httpAgent: agent,
+        method: "post",
+        data: log,
+      })
+    );
   });
+  await Promise.all(Promises);
 };
 
 const sendDiscordLog = async (
@@ -189,11 +217,12 @@ const sendDiscordLog = async (
       value: log[key],
     });
   }
+  const title = log.type || "Log";
   const payload = {
     type: config.webhookType!,
     embeds: [
       {
-        title: `[${log.type}]`,
+        title: `[${title}]`,
         color: color,
         fields: fields,
       },
@@ -201,19 +230,22 @@ const sendDiscordLog = async (
   };
 
   webhooks.forEach((webhook) => {
-    if (webhook.includes("discord")) {
-      Promises.push(
-        sendWebhook({
-          url: webhook,
-          httpAgent: agent,
-          method: "post",
-          data: payload,
-        })
-      );
-    }
+    Promises.push(
+      sendWebhook({
+        url: webhook,
+        httpAgent: agent,
+        method: "post",
+        data: payload,
+      })
+    );
   });
+  await Promise.all(Promises);
 };
-
+/**
+ *
+ * @param [options] settings
+ * @returns transport to be used with pino
+ */
 export const createTransport = (options: options) => {
   return build(async (source) => {
     const urlOthers: string[] = [];
