@@ -209,7 +209,10 @@ const sendDiscordLog = async (
   for (const key in log) {
     switch (typeof log[key]) {
       case "object":
-        log[key] = log[key].toString();
+        for (const keyLog in log[key]) {
+          log[keyLog] = log[key][keyLog].toString();
+        }
+        delete log[key];
         break;
       case "number":
         log[key] = log[key].toString();
