@@ -206,6 +206,16 @@ const sendDiscordLog = async (
     config.sameAgent || config.sameAgent === undefined
       ? https.Agent
       : undefined;
+  for (const key in log) {
+    switch (typeof log[key]) {
+      case "object":
+        log[key] = log[key].toString();
+        break;
+      case "number":
+        log[key] = log[key].toString();
+        break;
+    }
+  }
 
   log = await adjustWithCommonConfigs(log, config);
   const Promises: Promise<void>[] = [];
