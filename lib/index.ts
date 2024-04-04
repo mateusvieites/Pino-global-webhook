@@ -1,6 +1,19 @@
 import build from "pino-abstract-transport";
 import https from "https";
 import axios, { AxiosRequestConfig } from "axios";
+import axiosRetry from "axios-retry";
+
+axiosRetry(axios, {
+  retries: 3,
+  retryDelay: (retryCount) => {
+    return retryCount * 2000;
+  },
+  retryCondition: (error) => {
+    return (
+      axiosRetry.isNetworkError(error) || axiosRetry.isRetryableError(error)
+    );
+  },
+});
 
 enum pinoLevelType {
   "TRACE" = "TRACE",

@@ -1,6 +1,6 @@
 {
   "name": "pino-global-webhook",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "description": "A pino transport that sends logs trough webhooks ",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "axios-retry": "^4.1.0",
     "pino-abstract-transport": "^1.1.0"
   },
   "keywords": [
