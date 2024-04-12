@@ -105,7 +105,9 @@ const sendWebhook = async (
   return axios(axiosConfig)
     .then((response) => response.data)
     .catch((error) => {
-      throw new Error(`Erro ao fazer requisição para asdad: ${error.message}`);
+      throw new Error(
+        `Error sending to ${axiosConfig.url}: ${error.message}`
+      );
     });
 };
 
